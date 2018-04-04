@@ -6,7 +6,7 @@ services:
   - docker
 
 script:
-  - docker build -t capcodigital/ideafunnel .
+  - docker build -t capcodigital/ideafunnel dev/app/
 
 after_success:
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
