@@ -1,0 +1,14 @@
+sudo: required
+
+language: node_js
+
+services:
+  - docker
+
+script:
+  - docker build -t capcodigital/ideafunnel .
+
+after_success:
+  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  - docker tag if-app capcodigital/ideafunnel:latest
+  - docker push capcodigital/ideafunnel:latest
