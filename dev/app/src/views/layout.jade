@@ -1,0 +1,40 @@
+doctype html
+html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
+    include includes/head
+    body(ng-app="ideafunnelApp", ontouchmove="event.preventDefault()")
+        //layout
+        div.top-bar
+            div.top-bar-inner
+                div.top-bar-brand
+                    a(href="/")
+                        img.top-bar-logo(src="/images/ideafunnel_dark.png", style="height: 22px;")
+                div.top-profile-pic
+                    img.profile-circle(src="/me/profile/#{userId}")
+                div.top-bar-links
+                    ul
+                        if  section == "me"
+                            li.top-bar-link-active
+                                a(href="/me") Me
+                        else
+                            li
+                                a(href="/me") Me
+
+                        if  section == "idea-boards"
+                            li.top-bar-link-active
+                                a(href="/boards") Idea Boards
+                        else
+                            li
+                                a(href="/boards") Idea Boards
+
+                        if  section == "create"
+                            li.top-bar-link-active
+                                a(href="/boards/create") Create
+                        else
+                            li
+                                a(href="/boards/create") Create
+
+                    ul.navbar-right.right-padding
+                        li
+                            a(href='/logout') Log out
+
+        block content

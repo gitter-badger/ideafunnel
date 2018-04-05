@@ -1,0 +1,27 @@
+extends ../screen-layout
+
+block content
+
+  div(ng-controller="ViewIdeaBoardVotesController", ng-init="initIdeaBoard('#{boardId}', '#{user._id}')")
+    center
+        img(src="/images/ideafunnel_dark.png", style="width: 350px; margin-top: 20px; margin-bottom: 20px;")
+
+        h1(id="mainHeading") {{ideaBoard.title}}
+        h3 ideafunnel.net/{{ideaBoard._id}}
+        div(ng-show="showCard", id="mainCard")
+            div.card.card-no-shadowed.card-reflect.card-centered
+                div.screen-card-winner-text(style="color: #5B5B5C;")  {{currentIdea.description}}
+                div.big-card-controls(style="text-transform: none;")
+                    div(ng-if="currentIdea.createdBy") {{currentIdea.createdBy}}
+                    div(ng-if="currentIdea.guestCreatedBy") {{currentIdea.guestCreatedBy.name}}
+
+                div.big-card-controls-right(style="text-transform: none;")
+                    timeago(date="{{currentIdea.creationDate}}")
+                div.big-card-controls-top-right
+                    img.profile-circle(ng-if="currentIdea.createdBy", ng-src="/me/profile/{{currentIdea.createdBy}}", style="margin-top: -10px; margin-right: -4px;")
+                    img.profile-circle(ng-if="currentIdea.guestCreatedBy", ng-src="/guest/pic/{{currentIdea.guestCreatedBy.guestId}}", style="margin-top: -10px; margin-right: -4px;")
+
+
+    include ../includes/angular
+  script(src="/javascripts/app/controllers/view-idea-board-screen-controller.js")
+

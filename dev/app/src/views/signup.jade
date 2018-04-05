@@ -1,0 +1,46 @@
+extends new-layout
+block content
+    div.container(ng-controller="SignupController", ng-cloak, ng-init="initPage('#{user.firstName}', '#{user.lastName}', '#{user.email}', '#{user.username}')")
+        div.login-box
+            div.centered.large-margin-top
+                img(src="/images/ideafunnel_big.png", style="height: 20px;")
+            h2 Join Idea Funnel
+            if error
+                div.alert.alert-danger #{error}
+            form.medium-margin-top(name="signUpForm", action="/signup/complete", method="post")
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-user
+                    input.form-control.squished-form-control(type="text", required, name="firstName", placeholder="First Name", ng-model="user.firstName")
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-user
+                    input.form-control.squished-form-control.squished-form-control-no-top(type="text", required, name="lastName", placeholder="Last Name", ng-model="user.lastName")
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-envelope-o
+                    input.form-control.squished-form-control.squished-form-control-no-top(type="email", required, placeholder="Email", name="email", ng-model="user.email", ng-change="checkEmail()")
+                    div.alert-danger(ng-show="signUpForm.email.$dirty && !signUpForm.email.$valid") Email is not valid. xxxx@xxx.xx
+                    div.alert-danger(ng-show="!emailValidity.status") {{emailValidity.error}}
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-user
+                    input.form-control.squished-form-control.squished-form-control-no-top(type="text", required, name="username", placeholder="Username", ng-model="user.username", autocomplete="off", ng-change="checkUsername()")
+                    div.alert-danger(ng-show="!usernameValidity.status") {{usernameValidity.error}}
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-key
+                    input.form-control.squished-form-control.squished-form-control-no-top(type="password", required, placeholder="Password", name="password", ng-model="user.password", autocomplete="off")
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-key
+                    input.form-control.squished-form-control.squished-form-control-no-top(type="password", required, placeholder="Re-enter password", name="password2", ng-model="user.password2", autocomplete="off")
+                    div.alert-danger(ng-show="!checkPasswords()", style="padding:10px;") Passwords don't match. Please try again.
+                div.medium-margin-top.medium-margin-bottom
+                    button.btn.btn-default(type="button", style="margin-right: 10px;")
+                        a(href="/") Back
+                    button.btn.btn-default(type="submit", ng-disabled="!checkSubmit()") Complete
+
+            div.small-margin-top.large-margin-bottom
+                a(href="/login") Already have a login?
+

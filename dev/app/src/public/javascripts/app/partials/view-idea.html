@@ -1,0 +1,72 @@
+<div class="col-md-9">
+
+	<div class="large-margin-top">
+		<div class="card card-centered pointer large-card animated fadeIn" style="{{getBackgroundImageForCard(idea)}}">
+			<div class="close-card" ng-click="closeFullScreen()">x</div>
+
+			<div class="big-card-controls-top-right">
+				<img class="profile-circle-large" ng-if="idea.createdBy" ng-src="/me/profile/{{idea.createdBy}}" style="margin-top: -10px; margin-right: -4px;"/>
+				<img class="profile-circle-large" ng-if="idea.guestCreatedBy" ng-src="/guest/pic/{{idea.guestCreatedBy.guestId}}" style="margin-top: -10px; margin-right: -4px;"/>
+			</div>
+			<div class="big-card-controls" ng-show="idea.createdBy == username || adminOfBoard">
+				<div inline-confirm icon="fa fa-trash-o" text='' type="text" confirmfunction="deleteCard()"></div>
+			</div>
+			<div class="big-card-controls-right">
+				<div class="qualification-score-card" ng-if="!idea.qualificationScore && (idea.likes.length != 0 || idea.dislikes.length != 0)">
+					<i class="fa fa-thumbs-up"></i> <span>{{idea.likes.length}}</span>
+					<i class="fa fa-thumbs-down"></i> <span>{{idea.dislikes.length}}</span>
+				</div>
+				<div class="qualification-score-card" ng-if="idea.qualificationScore">
+					<i class="fa fa-bullseye"></i> <span ng-if="idea.qualificationScore">{{getPercentage(idea.qualificationScorePercentage)}}</span> <span ng-if="!idea.qualificationScore">0</span>
+				</div>
+			</div>
+			<div class="card-scribble card-scribble-large" ng-if="!idea.hasImage" style="padding-right: 50px;">{{idea.description}}</div>
+
+		</div>
+
+		<div class="large-margin-top card-instructions" ng-if="false">
+			Press <span class="badge pointer" ng-click="closeFullScreen()">ESC</span> to close, and use  <span class="badge pointer" ng-click="showPreviousCard()"><i class="fa fa-arrow-left"></i></span> and <span class="badge pointer" ng-click="showNextCard()"><i class="fa fa-arrow-right"></i></span> on your keyboard to cycle through ideas
+		</div>
+
+	</div>
+</div>
+
+<div class="col-md-3 sidebar full-height" ng-cloak>
+
+	<div class="centered large-margin-top">
+		<span class="view-tab" ng-class="{'view-tab-active': tab =='info'}" ng-click="changeTab('info')">Info</span>
+		<span class="view-tab" ng-class="{'view-tab-active': tab =='qualify'}" ng-click="changeTab('qualify')">Qualify</span>
+		<span class="view-tab" ng-class="{'view-tab-active': tab =='popularity'}" ng-click="changeTab('popularity')">Popularity</span>
+	</div>
+
+	<div class="medium-margin-top" ng-show="tab == 'qualify'">
+		<div ng-if="adminOfBoard && board.criteria.length > 0">
+
+			<div ng-repeat="criterion in board.criteria" ng-if="criterion.choices.length > 0" class="small-margin-top">
+				<div class="criteria-select-label">{{criterion.title}}</div>
+				<div class="btn-group">
+					<button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="small-margin-right">{{qualifyOptions[criterion._id].title}}</span><span class="caret"></span></button>
+					<ul role="menu" class="dropdown-menu">
+						<li ng-repeat="option in criterion.choices">
+							<div ng-click="qualifyIdeaWithOption(criterion, option)" class="dropdown-row">{{option.title}}</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div ng-if="!(adminOfBoard && board.criteria.length > 0)"> No criteria information available</div>
+	</div>
+
+	<div class="medium-margin-top centered" ng-show="tab == 'info'">
+		Created by <b>{{idea.createdBy || "Guest"}}</b> on <b>{{idea.creationDate | date}}</b>. <span ng-if="!idea.qualificationScore">Will be r</span><span ng-if="idea.qualificationScore">R</span>ated by {{board.members.length}} owner<span ng-show="board.members.length!=1">s</span> of the board.
+		<div id="chartHolder" class="medium-margin-top">
+			<div id="chart"></div>
+		</div>
+
+	</div>
+	<div class="medium-margin-top centered" ng-show="tab == 'popularity'">
+		Liked by {{idea.likes.length}} <br/>
+		Disliked by {{idea.dislikes.length}}
+	</div>
+</div>
+

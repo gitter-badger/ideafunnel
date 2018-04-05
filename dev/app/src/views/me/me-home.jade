@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  div.white-bg.ng-cloak
+      div.container(ng-controller="MeController", ng-init='initMePage("#{userId}", "#{fullName}", "#{profilePic}")')
+        div.row.me-heading-row
+            div.me-profile-pic
+                div.profile-pic-loader(ng-show="loadingProfilePic")
+                    i.fa.fa-spin.icon-refresh-1
+                div(anguprofile, imgId="dropTarget", imgclass="profile-circle-huge" imgsrc="/me/profile/#{userId}", uploadurl="/me/profile/upload")
+
+
+            div
+                h1 #{fullName}
+                h3 "An idea generation machine"
+
+        div.row
+            div.col-3
+
+
+
+
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/me-controller.js")

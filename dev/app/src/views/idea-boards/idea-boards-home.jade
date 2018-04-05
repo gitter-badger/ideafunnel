@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+
+  div.white-bg.ng-cloak
+      div.container(ng-controller="AllBoardsController")
+
+        div.padded-row(ng-show="!showCreate")
+            input.form-control.form-control-fill(ng-model="ideaBoardSearch", placeholder="Search boards", required)
+        div.padded-row.reveal-section(ng-show="showCreate")
+            h2 Create a new idea board
+            p An idea board is a place where you can put all of your ideas on a particular topic. After you've created one, you can add new members to it.
+            div.padded-row
+                form(action="/boards/create", method="post")
+                    input.form-control(placeholder="Name of board", name="title")
+                    input.form-control(placeholder="Short description", name="description")
+                    div
+                        input.btn.btn-blue(type="submit", value="Create")
+                        button.btn.btn-orange(type="button", ng-click="showCreate = false") Cancel
+
+        div.padded-row(ng-class="{'fadeIn': ideaBoards.length > 0, 'animated': ideaBoards.length > 0}")
+            div.col-3(ng-repeat="ideaBoard in ideaBoards | filter: ideaBoardSearch")
+                div.idea-board(ng-click="viewBoard(ideaBoard)")
+                    i.fa.fa-asterisk.huge-icon
+                    div.idea-board-bottom
+                        div.card-heading {{ideaBoard.title}}
+                        div.card-content {{ideaBoard.description}}
+
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/all-boards-controller.js")

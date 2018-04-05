@@ -1,0 +1,40 @@
+<div class="global-search" ng-show="globalSearch != ''">
+	<i class="fa fa-search"></i> {{globalSearch}} <i class="fa fa-times pointer" ng-click="clearGlobalSearch()"></i>
+</div>
+
+<div class="col-md-12 main-body-area full-height">
+
+	<!--<h1>WELCOME BACK</h1>-->
+	<h3>My Idea Boards</h3>
+
+	<div class="row large-margin-top">
+
+		<div class="col-md-3">
+			<div class="card-multiple"></div>
+			<div class="card board-card pointer" ng-click="viewIdeaBoard(board)">
+				<div class="board-bg-grey centered large-margin-top" style="padding-top: 30px;">
+					<a href="#/boards/create">
+						<i class="fa fa-plus-circle huge-icon"></i>
+					</a>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-md-3" ng-repeat="board in ideaBoards | filter:globalSearch">
+			<div class="card-multiple"></div>
+			<div class="card board-card pointer" ng-click="viewIdeaBoard(board)">
+				<div class="board-bg-green">
+					<h4>{{board.title}}</h4>
+					<p>{{board.description}}</p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+

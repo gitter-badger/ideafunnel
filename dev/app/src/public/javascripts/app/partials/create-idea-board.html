@@ -1,0 +1,58 @@
+<div class="col-md-12 main-body-area full-height">
+    <h2>Create a new Idea Board</h2>
+
+    <div class="medium-margin-top">
+        <h5>Title</h5>
+        <input class="form-control" type="text" maxlength="60" ng-model="board.title" ng-blur="autogenerateId()" placeholder="Enter a name for your board">
+        <div ng-if="missingFields && board.title.length==0" class="input-sub-description error">
+            <i class="fa fa-times "></i> Please add a title to your board
+        </div>
+    </div>
+
+    <div class="medium-margin-top">
+        <h5>Description</h5>
+        <input class="form-control" type="text" ng-model="board.description" maxlength="60" placeholder="Enter a short description for your board">
+        <!--{{}}-->
+        <div ng-if="missingFields && board.description.length==0" class="input-sub-description error">
+            <i class="fa fa-times "></i> Please add a description to your board
+        </div>
+    </div>
+
+    <div class="medium-margin-top">
+        <h5>Board Code</h5>
+        <input class="form-control" ng-model="board._id" type="text" ng-keyup="checkIdeaBoardCode()" maxlength="30" placeholder="Enter a short identifier for your board, e.g. my-board">
+        <div ng-if="searchingForValidCode && board._id && board._id != ''" class="input-sub-description">
+            <i class="fa fa-refresh fa-spin"></i> Checking board code
+        </div>
+
+        <div ng-if="codeValid && !searchingForValidCode && board._id && board._id != ''" class="input-sub-description valid">
+            <i class="fa fa-check"></i> Valid code
+        </div>
+
+        <div ng-if="!codeValid && board._id && board._id != '' && !searchingForValidCode" class="input-sub-description error">
+            <i class="fa fa-times"></i> Not a valid code <span ng-if="errorMsg.length !=0">- {{errorMsg}}</span>
+        </div>
+
+        <div ng-if="missingFields && board._id.length==0" class="input-sub-description error">
+            <i class="fa fa-times"></i> Please add a unique code to your board
+        </div>
+
+    </div>
+
+	<!--TODO complete functionality-->
+    <!--<div class="medium-margin-top">-->
+        <!--<h5 style="width:auto; display:inline-block; margin-right: 10px;">Allow Anonymous Ideas</h5>-->
+        <!--<input type="checkbox" ng-model="board.allowAnonymous" >-->
+    <!--</div>-->
+
+    <div class="medium-margin-top">
+        <button class="btn btn-default" ng-click="createNow()">
+            <i class="fa fa-refresh fa-spin" ng-show="creatingIdea"></i> Create
+        </button>
+        <button class="btn btn-default" ng-click="cancel()" ng-disabled="creatingIdea">
+            Cancel
+        </button>
+
+    </div>
+
+</div>

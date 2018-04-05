@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+
+  div.white-bg.ng-cloak
+      div.container(ng-controller="GenerateIdeasController")
+
+        div(id="swipeArea")
+            div.card.card-centered.scaleable-card(id="bigCard", style="overflow: hidden;")
+                textarea.full-screen-card-heading(id="console", style="border-style: none; width: 80%; height: 100%;")
+
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/generate-ideas-controller.js")

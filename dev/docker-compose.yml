@@ -1,0 +1,47 @@
+version: '3'
+services:
+
+  # Portainer UI
+  if_mgt:
+    image: portainer/portainer
+    container_name: if_mgt
+    ports:
+        - 9000:9000
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+  
+  # Traefik Reverse Proxy
+  rp:  
+    image: traefik
+    command: --web --docker --docker.domain=docker.localhost
+    ports:
+        - 80:80
+        - 8080:8080
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /dev/null:/traefik.toml
+
+  # MongoDB
+  if_db:
+    container_name: if_db
+    restart: always
+    image: mongo
+    volumes:
+      - /tmp/ideafunnel:/data/db
+    ports:
+      - 27017:27017
+  
+  # Angular/Node.js app
+  app:
+    restart: always
+    build: ./app
+    image: app
+    ports:
+       - 3000
+    links:
+      - if_db
+    depends_on:
+      - if_db
+    labels:
+      - "traefik.backend=if_app"
+      - "traefik.frontend.rule=Host:ideas.capco.com"

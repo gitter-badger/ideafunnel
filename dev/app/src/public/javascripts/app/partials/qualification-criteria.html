@@ -1,0 +1,146 @@
+<!--
+<div class="col-md-2 sidebar full-height">
+    <div class="fixed-sidebar">
+        <h1>{{board.title}}</h1>
+
+        <div>
+            <p>Use this page to add and remove members to this board</p>
+        </div>
+        <div>
+            <a href="#/boards/{{board._id}}"><i class="fa fa-chevron-circle-left icon-spaced"></i> Back to board</a>
+        </div>
+    </div>
+</div>
+-->
+
+<div class="col-md-10 main-body-area full-height">
+
+    <div class="fixed-search-bar">
+        <h1>{{board.title}}</h1>
+        <h5><a href="#/boards">Idea Boards</a> / <a href="#/boards/{{board._id}}">{{board.title}}</a> / <i class="fa fa-bullseye"></i> Qualification Criteria</h5>
+
+        <div>
+            <div class="btn-group">
+                <button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="small-margin-right"><i class="fa fa-bullseye"></i> Qualification Criteria</span><span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#/boards/{{board._id}}/"><i class="fa fa-th-large"/> All Ideas</span></a></li>
+                    <li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/members"><i class="fa fa-users"/> Members</span></a></li>
+                    <li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/sessions"><i class="fa fa-bookmark"/> Sessions</span></a></li>
+                    <li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/criteria"><i class="fa fa-bullseye"/> Qualification Criteria</span></a></li>
+                    <li><a href="/api/idea-boards/{{board._id}}/ideas/export"><i class="fa fa-share-square-o"/> Export to CSV</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="create-new-top-area medium-margin-top">
+            <h3>Add New</h3>
+            <div>
+                <input type="text" ng-model="addCriteriaTitle" class="form-control" placeholder="Enter a title for your criteria"/>
+            </div>
+            <div class="small-margin-top">
+                <button class="btn btn-default" ng-click="addNewCriterion()">Add this</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        <div class="row large-margin-top large-padded-top" style="margin-top: 290px;">
+            <div ng-repeat="criterion in criteria" class="col-md-6" ng-class="{'shake pulse': member.pulse}">
+                <div class="card">
+                    <div class="small-heading">{{criterion.title}}</div>
+                    <div class="small-margin-top">
+                        <span class="small-margin-right" ng-repeat="option in sortOptionsArray(criterion.choices)">{{option.title}} <span class="badge">{{option.weighting}}</span></span>
+                    </div>
+
+                    <div class="small-margin-top">
+                        <button class="btn btn-default small-margin-right" ng-click="showEditOptionsDialog(criterion)">Edit</button>
+                        <span inline-confirm icon="fa fa-trash-o" text='Delete' mainclass="btn btn-danger" type="button" confirmfunction="deleteCriterion(criterion)"></span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="editOptions" tabindex="-1" role="dialog" aria-labelledby="editOptionsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 ng-show="!editTitle" ng-click="showEditTitle()" class="modal-title" id="editOptionsLabel">{{selectedCriterion.title}} <i class="fa fa-edit pointer"></i></h4>
+                    <div ng-show="editTitle" class="medium-font-size">
+                        <input type="text" id="newTitle" class="form-control form-control-small" style="width: 100px; display: inline;" value="{{selectedCriterion.title}}"/>
+                        <i class="fa fa-check-circle-o pointer" ng-click="saveEditTitle()"></i>
+                        <i class="fa fa-times-circle-o pointer" ng-click="cancelEditTitle()"></i>
+                    </div>
+
+                </div>
+                <div class="modal-body">
+
+                    <p>Add and edit options for this criterion in the table below. Note that the score field, indicates what score the idea should get for each option.</p>
+
+                    <div class="small-margin-top">
+                        <table class="table">
+                            <tr>
+                                <th style="width: 200px">Option</th>
+                                <th style="width: 100px;">Score</th>
+                                <th style="width: 240px;">Edit/Remove</th>
+                            </tr>
+                            <tr ng-repeat="option in options">
+                                <td>
+                                    <div ng-show="!option.edit">{{option.title}}</div>
+                                    <div ng-show="option.edit">
+                                        <input id="editOptionTitle_{{option._id}}" type="text" class="form-control" value="{{option.title}}"/>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <div ng-show="!option.edit">{{option.weighting}}</div>
+                                    <div ng-show="option.edit">
+                                        <input id="editOptionScore_{{option._id}}" type="text" class="form-control" value="{{option.weighting}}"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div ng-show="!option.edit">
+                                        <button class="btn btn-xs btn-default small-margin-right" ng-click="editOption(option)">Edit</button>
+                                        <span inline-confirm icon="fa fa-trash-o" text='Delete' mainclass="btn btn-xs btn-danger" type="button" confirmfunction="deleteOption(option)"></span>
+                                    </div>
+                                    <div ng-show="option.edit">
+                                        <button class="btn btn-xs btn-default small-margin-right" ng-click="saveEditOption(option)">Save</button>
+                                        <button class="btn btn-xs btn-danger small-margin-right" ng-click="cancelEditOption(option)">Cancel</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-show="newOption.show">
+                                <td><input class="form-control" id="newOptionTitle" type="text" placeholder="Enter an option title"/></td>
+                                <td><input class="form-control" id="newOptionScore" type="text" placeholder="Score for option"/></td>
+                                <td>
+                                    <button class="btn btn-success small-margin-right btn-xs" ng-click="saveNewOption(criterion)">Save</button>
+                                    <button class="btn btn-danger btn-xs" ng-click="hideAddOption()">Cancel</button>
+                                </td>
+                            </tr>
+                            <tr ng-show="!newOption.show">
+                                <td colspan="3">
+                                    <div class="medium-margin-top">
+                                        <a href="" ng-click="showAddNewOption()">Add new option</a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+extends ../screen-layout
+
+block content
+
+  div(ng-controller="ViewIdeaBoardVotesController", ng-init="initIdeaBoard('#{boardId}', '#{user._id}')")
+    center
+        img(src="/images/ideafunnel_dark.png", style="width: 400px;")
+
+        div.url-heading(style="color: #fffff;") ideafunnel.net/{{ideaBoard._id}}
+        div.screen-main-heading.animated.slideInDown(id="mainHeading") {{selectedCriterion.title}}
+
+        div.row.screen-row(id="mainArea")
+            div.col-3(style="padding-top: 140px; -webkit-transform: perspective( 600px ) rotateY( 30deg );")
+                div.card.card-no-shadowed.card-reflect.animated.pulse(ng-show="rankings[2] && showNow[2]", style="margin-right: 20px; margin-left: 20px;")
+                    div.ribbon-wrapper-orange
+                        div.ribbon-orange 3rd
+                    div.screen-card-small-text {{rankings[2].idea.description}}
+            div.col-3
+                div.card.card-no-shadowed.card-reflect.animated.pulse(ng-show="rankings[0] &&showNow[0]")
+                    div.screen-card-winner-text {{rankings[0].idea.description}}
+                    div.ribbon-wrapper-green
+                        div.ribbon-green 1st
+            div.col-3(style="padding-top: 140px; -webkit-transform: perspective( 600px ) rotateY( -30deg );")
+                div.card.card-no-shadowed.card-reflect.animated.pulse(ng-show="rankings[1] &&showNow[1]", style="margin-right: 20px; margin-left: 20px;")
+                    div.screen-card-small-text {{rankings[1].idea.description}}
+                    div.ribbon-wrapper-orange
+                        div.ribbon-orange 2nd
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/view-idea-board-votes-controller.js")
+

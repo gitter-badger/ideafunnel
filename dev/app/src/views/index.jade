@@ -1,0 +1,6 @@
+extends main-layout
+block content
+    div.no-select.full-height.ng-cloak(ng-controller="HomeController")
+        div.container-fluid.full-height
+            div.row.full-height(style="margin-top: 50px;")
+                div.full-height.ng-cloak(ng-view, auto-scroll="true")

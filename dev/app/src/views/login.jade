@@ -1,0 +1,35 @@
+extends new-layout
+block content
+
+    div.container
+
+        div.login-box
+            div.centered.large-margin-top
+                img(src="/images/ideafunnel_big.png", style="height: 20px;")
+
+            h2 Welcome Back
+
+            form.medium-margin-top(name="loginForm", action="/login", method="post")
+                //if error && error.length!=0
+                //    div.alert.alert-danger #{error}
+
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-envelope-o
+                    input.form-control.squished-form-control(name="username", placeholder="Email", type="text", required)
+                div.input-with-icon
+                    div.form-icon
+                        i.fa.fa-key
+                    input.form-control.squished-form-control.squished-form-control-no-top(placeholder="Password", type="password", name="password")
+                if error && error.length != 0
+                    div.alert.alert-danger.remove #{error}
+                div.medium-margin-top.medium-margin-bottom
+                    button.btn.btn-default(type="button", style="margin-right: 10px;")
+                        a(href="/") Back
+                    button.btn.btn-default(type="submit") Login
+
+            div.small-margin-top.large-margin-bottom
+                //a(href="#") Forgotten password? //TODO build out
+                //span &nbsp;&nbsp&nbsp;
+                a(href="/signup") Not yet registered?
+

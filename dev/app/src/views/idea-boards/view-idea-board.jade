@@ -1,0 +1,251 @@
+extends ../layout
+
+block content
+
+
+  div.white-bg.ng-cloak
+
+
+      div(ng-controller="ViewIdeaBoardController", ng-init="initIdeaBoard('#{boardId}', '#{user._id}')")
+        div.fadeIn.animated(ng-show="showFullScreenCard")
+            div.close-card(ng-click="closeFullScreen()") x
+            div.big-idea
+                div.card.card-centered.scaleable-card(style="{{getBackgroundImageForCard(fullScreenCard)}}")
+                    div.full-screen-card-heading(ng-dblclick="editFullScreenDescription()", contenteditable="{{fullScreenContentEditable}}", ng-if="!fullScreenCard.hasImage") {{fullScreenCard.description}}
+                    div.big-card-controls(ng-if="fullScreenCard.createdBy == username || userIsAdmin")
+                        inline-confirm(icon="icon-trash-can", text='', type="text", confirmfunction="deleteCurrentBigCard()")
+                    div.big-card-controls-right
+                        timeago(date="{{fullScreenCard.creationDate}}")
+                    div.big-card-controls-top-right
+                        img.profile-circle(ng-if="fullScreenCard.createdBy", ng-src="/me/profile/{{fullScreenCard.createdBy}}", style="margin-top: -10px; margin-right: -4px;")
+                        img.profile-circle(ng-if="fullScreenCard.guestCreatedBy", ng-src="/guest/pic/{{fullScreenCard.guestCreatedBy.guestId}}", style="margin-top: -10px; margin-right: -4px;")
+
+
+                div.big-comment-section
+                    div.centered
+                        span.pointer(ng-class="{'bold-span': commentsOrQualification == 'comments'}")
+                            a(ng-click="commentsOrQualification = 'comments'") Comments
+                        span.icon-spaced |
+                        span.pointer.icon-spaced(ng-class="{'bold-span': commentsOrQualification == 'qualification'}")
+                            a(ng-click="commentsOrQualification = 'qualification'") Qualification
+                    div
+                        div.padded-row(ng-show="commentsOrQualification == 'comments'")
+                            div.comment-entry
+                                img.profile-circle(ng-src="/me/profile/{{username}}")
+                                input.form-control.form-control-small(id="commentEntry", placeholder="Add a comment", ng-model="comment")
+                                button.btn.btn-blue.btn-slim.btn-input(ng-click="addComment()")
+                                    span(ng-show="!commentSpinner") Add
+                                    span(ng-show="commentSpinner")
+                                        i.fa.fa-spin.icon-refresh-1
+                            div.comment-holder.centered.placeholder-colour(ng-show="loadingComments")
+                                i.fa.fa-spin.icon-refresh-1
+                                span.icon-spaced Loading comments
+
+                            div(ng-show="!loadingComments")
+                                div.comment-holder(ng-repeat="comment in fullScreenCard.comments")
+                                    img.profile-circle(ng-src="/me/profile/{{comment.createdBy.id}}", style="top: 16px;")
+                                    div.comment.comment-bubble
+                                        a(href="") {{comment.createdBy.id}}
+                                        span.icon-spaced {{comment.comment}}
+                                        div.comment-details
+                                            timeago(date="{{comment.creationDate}}")
+                                            inline-confirm(ng-if="comment.createdBy.id && comment.createdBy.id == username", icon="icon-trash-can icon-spaced icon-spaced-right", text='Delete', type="text", confirmfunction="deleteComment(comment)")
+
+
+
+                        div.padded-row(ng-show="commentsOrQualification == 'qualification'")
+                            div(ng-if="!criteriaSet")
+                                div.placeholder-colour.centered No qualification criteria set.
+                                div.placeholder-colour.centered
+                                    a(href="") Setup some now
+                            div.centered(ng-if="criteriaSet")
+                                div.criterion(ng-repeat="criterion in ideaBoard.standardCriteria", ng-if="criterion.enabled == true")
+                                    i.icon-spaced.icon-spaced-right(class="{{getCriterionIcon(criterion._id)}}")
+                                    span {{getCriterionTitle(criterion._id)}}
+                                    span.criterion-rating(ng-click="showCriterionMenu(criterion, $event)", class="criterion-rating{{getCurrentCriterionColour(criterion)}}") {{getCurrentCriterionValue(criterion)}}
+                                div.criterion-dropdown(ng-show="criterionMenu", style="left: {{criterionMenu.left}}px; top: {{criterionMenu.top}}px;")
+                                    div.criterion-rating-dropdown(ng-repeat="option in criterionMenu.options", ng-click="selectOptionForCriterion(criterionMenu.selectedCriterion, option)") {{option.description}}
+
+            div.carousel.left-carousel(ng-click="showPreviousCard()")
+                i.icon-chevron-left-thick
+            div.carousel.right-carousel(ng-click="showNextCard()")
+                i.icon-chevron-right-thick
+
+        div(ng-show="!showFullScreenCard")
+
+            div.container
+
+                    h2 {{ideaBoard.title}}
+                    h5 http://ideafunnel.net/{{ideaBoard._id}}
+
+                    div
+                        button.btn.btn-toggle(ng-repeat="menuIcon in menuIcons", ng-class="{'btn-toggle-selected': selectedPage == menuIcon.pageName, 'btn-toggle-first': $index == 0, 'btn-toggle-last': $index + 1 == menuIcons.length}", ng-click="showPage(menuIcon)", ng-mouseover="hoverDescription(menuIcon)", ng-mouseout="menuOverDescription = null")
+                            i(class="{{menuIcon.icon}}")
+
+
+                    div(ng-show="page == 'ideas'")
+
+
+                        div.padded-row
+                            div.card.card-full-width(ng-show="showCreateNew", ng-class="{'fadeIn': showCreateNew, 'animated': showCreateNew}")
+                                h2(id="ideaEntry", contenteditable=true)
+                                div.padded-row(style="margin-bottom: 0px;")
+                                    button.btn.btn-blue(ng-click="createNewIdea()") Add
+                                    button.btn.btn-orange(ng-click="showCreateNew = false") Forget it
+
+                        div.padded-row(ng-show="!showCreateNew")
+                            input.form-control(ng-model="searchField", placeholder="Search ideas")
+
+                        div.padded-row
+                            div.col-12(ng-show="loadingIdeas")
+                                div.loading
+                                    i.fa.fa-spin.icon-refresh-1
+                                    span.icon-spaced Loading Ideas
+
+                            div.col-3(ng-show="!loadingIdeas")
+                                div.card
+                                    div.add-new-icon.placeholder-colour(ng-show="!addingNew", ng-click="addNewCard()")
+                                        i.icon-comment-add
+                                    div.card-text(id="ideaEntryCard", ng-show="addingNew", contenteditable="true")
+                                    div.small-card-controls-right(ng-show="addingNew", ng-class="{'red-text': charactersLeft <= 0}") {{charactersLeft}}
+                                    div.small-card-controls.placeholder-colour(ng-show="addingNew", ng-click="cancelNewCard()")
+                                        i.icon-trash-can
+
+                            div.col-3(ng-show="!loadingIdeas", ng-repeat="idea in ideas | filter: searchField", ng-class="")
+                                div.card(ng-click="cardClick(idea)", ng-class="{'pulse': idea.pulse, 'animated': idea.pulse, 'small-rotate-right': $index % 2 == 0, 'small-rotate-left': $index % 2 != 0}", style="{{getBackgroundImageForCard(idea)}}")
+                                    div.card-text(ng-if="!idea.hasImage") {{idea.description}}
+
+                                    div.small-card-controls-top-right
+                                        img.profile-circle(ng-if="idea.createdBy", ng-src="/me/profile/{{idea.createdBy}}?size=small", style="width: 22px; height: 22px; margin-bottom: 1px; margin-left: 1px;")
+                                        img.profile-circle(ng-if="idea.guestCreatedBy", ng-src="/guest/pic/{{idea.guestCreatedBy.guestId}}?size=small", style="width: 22px; height: 22px; margin-bottom: 1px; margin-left: 1px;")
+
+
+                                    div.small-card-controls.small-text(style="max-width: 100px; overflow: hidden;")
+                                        span(ng-if="idea.createdBy") {{idea.createdBy}}
+                                        span(ng-if="idea.guestCreatedBy") {{idea.guestCreatedBy.name}}
+
+
+                                    div.small-card-controls-right.small-text
+                                        timeago(date="{{idea.creationDate}}")
+
+
+                    div.large-padded-row.content-area(ng-show="page == 'members'")
+                        h2 Members
+                        div.padded-row
+                            input(type="radio", ng-model="accessType", value="restricted")
+                            span.radio-label(ng-class="{'placeholder-colour': accessType != 'restricted'}") Restricted Access
+                            input.radio-spaced(type="radio", ng-model="accessType", value="open")
+                            span.radio-label(ng-class="{'placeholder-colour': accessType != 'open'}") Open Access
+
+                        div.padded-row
+                            angucomplete(id="members", clearonselect="true", placeholder="Add somebody to this board", pause="200", selectedobject="selectedUser", url="/api/user/find?s=", titlefield="firstName,surname", descriptionfield="email", inputclass="form-control")
+
+                        div.row.large-padded-row
+                            div(ng-repeat="boardMember in boardMembers")
+                                div.member-row(ng-class="{'pulse': boardMember.pulse, 'animated': boardMember.pulse}")
+                                    div.member-row-profile
+                                        img(ng-src="/me/profile/{{boardMember.userId}}", style="width: 30px;")
+                                    div.member-row-content
+                                        h3 {{boardMember.userId}}
+                                            div.owner-indicator(ng-if="boardMember.admin")
+                                                i.icon-manager
+
+
+                                    div.member-row-butttons(ng-if="username != boardMember.userId")
+                                        button.btn.btn-blue.btn-slim(ng-if="!boardMember.admin", ng-click="updateMemberRights(boardMember)")
+                                            i.icon-manager.icon-spaced-right
+                                            span.icon-spaced Make Owner
+                                        button.btn.btn-blue.btn-slim(ng-if="boardMember.admin", ng-click="updateMemberRights(boardMember)")
+                                            i.icon-connection.icon-spaced-right
+                                            span.icon-spaced Make Normal
+                                        inline-confirm(icon="icon-trash-can", mainclass="btn btn-orange btn-slim", text='Remove', type="button", confirmfunction="removeMemberFromBoard($index)")
+
+
+                    div.large-padded-row.content-area(ng-show="page == 'settings'")
+                        h2 Settings
+                        h3 Qualification Criteria
+                        p Which criteria do you want to qualify ideas in this board against?
+                        div.padded-row(ng-if="false")
+                            button.btn.btn-blue(ng-click="showCreateCriteria = true", ng-show="!showCreateCriteria") Add custom criteria
+                            div.padded-row.reveal-section(ng-show="showCreateCriteria")
+                                h2 Add new qualification criteria
+                                input.form-control(placeholder="Criteria title, e.g. Total Cost", ng-model="criteriaTitle")
+                                input.form-control(placeholder="Description of criteria", ng-model="criteriaDescription")
+                                div.padded-row
+                                    h4 Options
+
+                                    input.form-control(placeholder="Type an option here", ng-model="option1")
+                                    input.form-control(placeholder="Type an option here", ng-model="option2")
+                                    input.form-control(placeholder="Type an option here", ng-model="option3")
+                                    input.form-control(placeholder="Type an option here", ng-model="option4")
+                                    input.form-control(placeholder="Type an option here", ng-model="option5")
+                                div
+                                    button.btn.btn-blue(ng-click="addNewCriteria()") Create
+                                    button.btn.btn-orange(ng-click="showCreateCriteria = false") Forget it
+
+
+                        div.padded-row
+                            div(ng-repeat="defaultCriterion in ideaBoard.standardCriteria", style="font-size: 16px;", ng-class="{'placeholder-colour': !defaultCriterion.enabled}")
+                                input(type="checkbox", ng-model="ideaBoard.standardCriteria[$index].enabled")
+                                i.icon-spaced.icon-spaced-right(class="{{defaultCriterion.icon}}")
+                                span {{defaultCriterion.title}}
+                            div
+                                button.btn.btn-blue(ng-click="saveStandardCriteria()")
+                                    span Save
+                                    i.icon-spaced.fa.icon-refresh-1.fa-spin(ng-show="savingCriteria")
+
+
+
+                        div(ng-if="false && ideaBoard.qualificationCriteria && ideaBoard.qualificationCriteria.length > 0")
+                            h3 Custom Criteria
+                            div(ng-repeat="criterion in ideaBoard.qualificationCriteria")
+                                h4 {{criterion.description}}
+
+                    div.large-padded-row.content-area(ng-show="page == 'qualification'")
+                        h2 Qualification Criteria
+                        table.padded-row
+                            tr
+                                th Idea
+                                th(ng-repeat="criterion in ideaBoard.standardCriteria", ng-if="criterion.enabled") {{getCriterionTitle(criterion._id)}}
+                            tr(ng-repeat="idea in ideas")
+                                td {{idea.description}}
+                                td(ng-repeat="criterion in ideaBoard.standardCriteria", ng-if="criterion.enabled")
+                                    span.criteria-table-cell(ng-if="getCurrentCriterionValueForIdea(criterion, idea) != ''", class="criterion-rating{{getCurrentCriterionColourForIdea(criterion, idea)}}") {{getCurrentCriterionValueForIdea(criterion, idea)}}
+
+                    div.large-padded-row.content-area(ng-show="page == 'graphs'")
+                        h2 Theme Analysis
+                        div(id="chart", style="width: 90%; height: 550px;")
+
+                    div.large-padded-row.content-area(ng-show="page == 'sessions'")
+                        h2 Sessions
+                        p Create a session to capture ideas from a group of people who aren't necessarily on Idea Funnel. They can download our iPhone app, enter the session code and (optional) password and begin generating ideas.
+
+                        div.row.large-padded-row
+                            div.col-6
+                                h3 Create New
+                                input.padded-row.form-control.form-control-small(ng-model="sessionTitle", placeholder="Title")
+                                input.padded-row.form-control.form-control-small(ng-model="sessionPassword", placeholder="Password (optional)")
+                                div
+                                    button.btn.btn-blue(ng-click="createNewSession()") Create
+
+                            div.col-6
+                                h3 Existing Sessions
+                                div(ng-if="!ideaBoard.sessions || ideaBoard.sessions.length == 0").padded-row.placeholder-colour None
+                                div(ng-if="ideaBoard.sessions.length > 0").padded-row
+                                    div(ng-repeat="session in ideaBoard.sessions")
+                                        a(href="#") {{session.title}}
+                                            span(ng-if="session.password")
+                                                span &nbsp;(
+                                                i.fa.fa-lock
+                                                span )
+                                            span(ng-if="!session.password")
+                                                span &nbsp;(
+                                                i.fa.fa-unlock
+                                                span )
+
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/view-idea-board-controller.js")
+  script(src="/javascripts/d3.v3.min.js")
+  script(src="/javascripts/bubble-builder.js")
+

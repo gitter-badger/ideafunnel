@@ -1,0 +1,36 @@
+{
+    "globals": {
+        "ideafunnelApp": true,
+        "ideafunnelMainApp": true,
+        "handleError": true,
+        "$": true,
+        "Hammer": true,
+        "getWithErrorHandling": true,
+        "postWithErrorHandling": true,
+        "alert": true,
+        "getTabPage": true,
+        "QRCode": true,
+        "angular": true,
+        "username": true,
+        "moment": true,
+        "d3": true
+    },
+    "nonew": true,
+    "curly": true,
+    "noarg": true,
+    "white": true,
+    "noempty": true,
+    "node": true,
+    "eqeqeq": true,
+    "strict": false,
+    "undef": true,
+    "bitwise": true,
+    "immed": true,
+    "browser": true,
+    "camelcase": true,
+    "boss": true,
+    "nonbsp": true,
+    "freeze": true,
+    "globalstrict": true
+
+}

@@ -1,0 +1,109 @@
+extends ../simple-layout
+block content
+    div.container.ng-cloak(style="color: #5B5B5C; margin-top: 20px; font-size: 15px;", ng-controller="SessionHomeController", ng-init="initPage('#{userId}', '#{boardId}')")
+        center
+            input(type="file", id="fileUpload", style="display: none;")
+            div(ng-show="page == 'welcome'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+                h2 #{title}
+                p Welcome to Idea Funnel. Choose an option below to start generating ideas.
+                div
+                    button.btn.btn-blue(ng-click="changePage('guest')") Join as guest
+                    //button.btn.btn-blue(ng-click="changePage('login')") Login
+            div(ng-show="page == 'login'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+            div(ng-show="page == 'guest'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+                h3.padded-row(ng-click="selectFile()") What is your name?
+                input.form-control.form-control-mini.padded-row(ng-model="guestName", placeholder="Enter your name")
+
+                div
+                    button.btn.btn-blue(ng-click="guestNameEntered()")
+                        i.icon-spaced-right.fa.fa-spinner.fa-spin(ng-show="creatingGuest")
+                        span Continue
+
+            div(ng-show="page == 'guest-pic'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+                h3.padded-row(ng-click="selectFile()") What do you look like?
+                p Click on the picture below to upload or choose a photo, or skip this
+
+                div.padded-row
+                    div(anguprofile, imgId="dropTarget", imgclass="guest-profile-pic" imgsrc="/guest/pic/{{guest._id}}", uploadurl="/guest/{{guest._id}}/pic/upload")
+                    a(href="#/choose")
+                        button.btn.btn-blue Continue
+
+
+            div(ng-show="page == 'choose'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+                h3.padded-row(ng-click="selectFile()") Which session do you want to join?
+
+                div.large-padded-row
+                    div.small-margin-top.session-select(ng-repeat="session in sessions")
+                        div(ng-click="chooseSession(session)")
+                            span(ng-if="session.sessionType == 'vote'")
+                                i.fa.fa-bar-chart-o
+                                span &nbsp;
+                            a(href="") {{session.title}}
+
+
+            div(ng-show="page == 'password'")
+                img.session-logo(src="/images/ideafunnel_logo_small.png")
+                h3.padded-row(ng-click="selectFile()") Please enter the session password
+
+                div
+                    input.form-control.form-control-mini.padded-row(placeholder="Password", ng-model="sessionPassword", type="password")
+
+                div
+                    button.btn.btn-blue(ng-click="passwordEntered()") Enter
+
+
+            div(ng-show="page == 'generate'")
+                div(id="swipeArea")
+                    div.card.card-centered.scaleable-card.session-card(id="bigCard", style="")
+                        textarea.full-screen-card-heading(ng-model="cardContent", placeholder="Click here to enter an idea and then swipe it up to submit it", style="border-style: none; width: 95%; overflow: hidden; height: 90%; outline-style: none !important;")
+                    div.large-padded-row
+                        img.session-logo(src="/images/ideafunnel_logo_small.png", style="width: 100px;")
+
+
+            div(ng-show="page == 'vote'")
+                div(ng-show="loadingVotes")
+                    div.large-spinner
+                        i.fa.fa-refresh.fa-spin
+                    div.large-spinner-placeholder Loading
+
+                div(ng-show="!loadingVotes && !finishedVoting", id="votingScreen")
+
+                    div.card.card-centered.scaleable-card(id="bigCard", style="")
+                        div.full-screen-card-heading(style="border-style: none; width: 85%; overflow: hidden; height: 90%; outline-style: none !important;") {{currentIdea.description}}
+                        div.small-card-controls-top-right
+                            img.profile-circle(ng-if="currentIdea.createdBy", ng-src="/me/profile/{{currentIdea.createdBy}}?size=small", style="width: 22px; height: 22px; margin-bottom: 1px; margin-left: 1px;")
+                            img.profile-circle(ng-if="currentIdea.guestCreatedBy", ng-src="/guest/pic/{{currentIdea.guestCreatedBy.guestId}}?size=small", style="width: 22px; height: 22px; margin-bottom: 1px; margin-left: 1px;")
+
+
+                        div.small-card-controls.small-text(style="max-width: 100px; overflow: hidden;")
+                            span(ng-if="currentIdea.createdBy") {{currentIdea.createdBy}}
+                            span(ng-if="currentIdea.guestCreatedBy") {{currentIdea.guestCreatedBy.name}}
+                    //div.large-padded-row
+                        img(src="/images/ideafunnel_logo_small.png", style="width: 100px")
+                    div.large-padded-row
+                        div.criteria-row(ng-repeat="criterion in votingCriteria")
+                            div {{criterion.title}}
+                            select.criteria-select(id="criterion_{{criterion._id}}")
+                                option(value="")
+                                option(ng-repeat="option in criterion.choices", value="{{option._id}}") {{option._id}}
+
+
+                        div
+                            button.btn.btn-blue(ng-click="voteForIdea()") Vote
+
+
+                div(ng-show="finishedVoting")
+                    div.large-spinner
+                        i.fa.fa-check-circle-o
+                    div.large-spinner-placeholder Thanks all done
+
+
+
+
+        include ../includes/angular
+        script(src="/javascripts/app/controllers/session-home-controller.js")

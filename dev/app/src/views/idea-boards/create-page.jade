@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+
+  div.white-bg.ng-cloak
+      div.container(ng-controller="CreateIdeaBoardController")
+
+        div.padded-row(ng-class="{'fadeIn': ideaBoards.length > 0, 'animated': ideaBoards.length > 0}")
+            h1 Create a new Idea Board
+            p.lead Let your imagination go wild on an idea board. All you need to do to choose a name and away you go
+
+            div.padded-row
+                div
+                    label Board Name
+                input.form-control(ng-model="board.title", placeholder="A name for your board")
+
+            div.padded-row
+                div
+                    label URL
+                input.form-control(ng-model="board._id", placeholder="A unique identifier for your board that will become its URL", ng-keyup="checkIdeaBoardCode()")
+                div.small.placeholder-colour http://ideafunnel.net/{{board._id}}
+                    i.icon-spaced.fa.fa-check(ng-show="codeValid && board._id && board._id != '' && !searchingForValidCode")
+                    i.icon-spaced.fa.fa-times(ng-show="!codeValid && board._id && !searchingForValidCode")
+                    i.icon-spaced.fa.fa-spin.fa-spinner(ng-show="searchingForValidCode && board._id != ''")
+
+            div.padded-row
+                div
+                    label One line description
+                input.form-control(ng-model="board.description", placeholder="Short description of your board")
+
+            div.padded-row
+                button.btn.btn-blue(ng-click="createNow()") Create
+
+
+
+  include ../includes/angular
+  script(src="/javascripts/app/controllers/create-idea-board-controller.js")

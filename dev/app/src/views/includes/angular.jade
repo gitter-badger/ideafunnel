@@ -1,0 +1,20 @@
+script(src="/bower/angular/angular.min.js")
+script(src="/bower/angular-route/angular-route.min.js")
+script(src="/bower/angular-touch/angular-touch.min.js")
+script(src="/bower/moment/min/moment.min.js")
+script(src="/bower/angucomplete/angucomplete.js")
+
+script(src="/javascripts/hammer.min.js")
+script(src="/javascripts/app/directives/inline-confirm.js")
+script(src="/javascripts/app/directives/timeago.js")
+script(src="/javascripts/app/directives/angular-local-storage.min.js")
+script(src="/javascripts/app/directives/anguprofile.js")
+if app
+    script(src="/javascripts/app/#{app.fileName}.js")
+    script(src="/javascripts/app/controllers/nav-controller.js")
+    script(src="/javascripts/app/controllers/idea-boards-controller.js")
+    script(src="/javascripts/app/controllers/create-idea-board-controller.js")
+    script(src="/javascripts/app/controllers/view-idea-board-controller.js")
+    script(src="/javascripts/app/controllers/view-idea-controller.js")
+else
+    script(src="/javascripts/app/ideafunnel-app.js")

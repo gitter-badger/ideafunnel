@@ -1,0 +1,25 @@
+<style>
+    .top-background::after { background-image: url('/me/profile/{{userId}}') }
+</style>
+
+<div class="col-md-12 top-background top-background-non-full">
+
+        <div class="centered">
+            <div class="centered" anguprofile imgId="dropTarget" imgclass="profile-page-circle" imgsrc="/me/profile/{{userId}}" uploadurl="/me/profile/upload"></div>
+
+            <h1>{{userId}}</h1>
+
+        </div>
+
+
+
+</div>
+
+
+<div class="col-md-12">
+    <div class="large-padded-row centered">
+        <div class="huge-heading" ng-if="stats.totalIdeas && stats.totalIdeas > 0">I've had <span class="emphasise">{{stats.totalIdeas}}</span> ideas since joining. <br/> <span ng-if="stats.lastIdea">My last idea was on <span class="emphasise">{{stats.lastIdea | date}}</span>.</span></div>
+        <div class="huge-heading" ng-if="!stats.totalIdeas || stats.totalIdeas <= 0">I'm new around here and haven't had any ideas yet</div>
+    </div>
+
+</div>

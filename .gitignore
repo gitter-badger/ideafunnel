@@ -1,0 +1,9 @@
+dev/node_modules/
+dev/src/public/bower/
+dev/data/
+ops/keys/
+ops/.terraform/
+ops/*.tfstate*
+.idea/
+.idea/workspace.xml
+ideafunnel.log

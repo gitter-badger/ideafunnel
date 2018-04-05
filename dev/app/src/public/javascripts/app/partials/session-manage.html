@@ -1,0 +1,49 @@
+<div class="col-md-10 main-body-area full-height">
+
+    <div class="fixed-search-bar">
+        <h1>{{board.title}}</h1>
+        <h5><a href="#/boards">Idea Boards</a> / <a href="#/boards/{{board._id}}">{{board.title}}</a> / <i class="fa fa-bookmark-o"></i> Sessions</h5>
+
+        <div class="medium-margin-top">
+            <div class="btn-group">
+                <button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="small-margin-right"><i class="fa fa-bookmark-o"></i> Sessions</span><span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#/boards/{{board._id}}/"><i class="fa fa-th-large"/> All Ideas</span></a></li>
+                    <li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/members"><i class="fa fa-users"/> Members</span></a></li>
+                    <!--<li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/sessions"><i class="fa fa-bookmark"></i> Sessions</span></a></li>-->
+                    <li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/criteria"><i class="fa fa-bullseye"/> Qualification Criteria</span></a></li>
+                    <li><a href="/api/idea-boards/{{board._id}}/ideas/export"><i class="fa fa-share-square-o"/> Export to CSV</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="create-new-top-area medium-margin-top">
+            <h3>Add New</h3>
+            <div>
+                <input type="text" ng-model="newSessionTitle" class="form-control" placeholder="Enter a new session name here"/>
+            </div>
+            <div class="small-margin-top">
+                <button class="btn btn-default" ng-click="createNewSession()">Create this</button>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <div class="large-margin-top large-padded-top" style="padding-top: 300px;">
+        <div class="row">
+            <div ng-repeat="session in board.sessions" class="col-md-6">
+                <div class="card">
+                    <h4>{{session.title}}</h4>
+                    <div>
+                        <a href="/boards/{{board._id}}/screen" class="small-margin-right">Live Screen</a>
+                        <span inline-confirm icon="" text='Delete' type="text" confirmfunction="deleteSession(session)"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,231 @@
+<div class="global-search" ng-show="globalSearch != ''">
+	<i class="fa fa-search"></i> {{globalSearch}} <i class="fa fa-times pointer" ng-click="clearGlobalSearch()"></i>
+</div>
+
+<div class="col-md-12 main-body-area full-height">
+
+	<div>
+		<h1>{{board.title}}</h1>
+		<div class="row">
+			<div class="col-md-3">
+				<label>Board code:&nbsp;</label>
+				<p style="display:inline-block">{{board._id}}</p>
+			</div>
+			<div class="col-md-9">
+				<label>Description:&nbsp;</label>
+				<p style="display:inline-block">{{board.description}}</p>
+			</div>
+		</div>
+
+		<h5><a href="#/boards">Idea Boards</a> / <a href="#/boards/{{board._id}}">{{board.title}}</a> /
+			<i class="fa fa-th-large"></i> All Ideas</h5>
+
+		<div>
+			<div class="btn-group">
+				<button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+					<span class="small-margin-right"><i class="fa fa-cogs"></i> Setup</span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#/boards/{{board._id}}/"><i class="fa fa-th-large"/> All Ideas</span></a></li>
+					<li ng-if="adminOfBoard">
+						<a href="#/boards/{{board._id}}/members"><i class="fa fa-users"/>Members</a>
+					</li>
+					<!--<li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/criteria"><i class="fa fa-bullseye"></i> Qualification Criteria</span></a></li>-->
+					<li>
+						<a href="/api/idea-boards/{{board._id}}/ideas/export"><i class="fa fa-share-square-o"></i>
+						Export to CSV
+						</a>
+					</li>
+					<li ng-if="adminOfBoard">
+						<a href="/api/idea-boards/{{board._id}}/delete"><i class="fa fa-trash"></i>
+						Delete Board</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="btn-group">
+				<button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+					<span class="small-margin-right"><i class="fa fa-sort"></i> Sort by
+						<span ng-show="sortBy[0] == 'creationDate'">date</span>
+						<span ng-show="sortBy[0] == 'qualificationScore'">score</span>
+					</span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li>
+						<a href="" ng-click="setSortBy('creationDate')">
+							<i class="fa fa-check" ng-show="sortBy[0] == 'creationDate'"></i>
+							Sort by date
+						</a>
+					</li>
+					<li ng-if="board.criteria && board.criteria.length > 0">
+						<a href="" ng-click="setSortBy('qualificationScore')">
+							<i class="fa fa-check" ng-show="sortBy[0] == 'qualificationScore'"></i>
+							Sort by qualification score
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="btn-group">
+				<button tabindex="-1" class="btn btn-default dropdown-toggle" ng-click="showAccessModal()">
+					<span class="small-margin-right">
+						<i class="fa" ng-class="{'fa-lock': !board.openAccess, 'fa-unlock-alt': (board.openAccess && (!board.openAccessPassword || board.openAccessPassword == '')), 'fa-shield': (board.openAccess && board.openAccessPassword != '')}"></i>
+					</span>
+					<span ng-show="!board.openAccess">Private Board</span>
+					<span ng-show="board.openAccess && (board.openAccessPassword == '' || !board.openAccessPassword)">Open Access</span>
+					<!--<span ng-show="board.openAccess && board.openAccessPassword != ''">Open with Password</span>--><!--TODO implement this option-->
+				</button>
+			</div>
+			<div class="btn-group">
+				<button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle" ng-click="showQrCode()">
+					<i class="fa fa-qrcode pointer"></i> QR code
+				</button>
+			</div>
+
+			<div class="btn-group" ng-show="hotList.length > 0">
+				<button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle">
+					<span class="small-margin-right">
+						<i class="fa fa-fire" ng-class="{'orange-icon': selectedHotTopics.length > 0}"></i> Hot topics
+					</span>
+					<span class="caret"></span>
+				</button>
+				<div class="dropdown-menu" role="menu" style="padding: 10px;" onclick="return false;">
+					<div class="hot-topic" ng-repeat="hotTopic in hotList | orderBy:'count':true" ng-if="$index < 20"
+						 ng-class="{'hot-topic-selected': checkIfTopicSelected(hotTopic)}"
+						 ng-click="selectHotTopic(hotTopic, $event)">
+						{{hotTopic.originals[0]}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-show="firstLoad" class="light-placeholder-colour centered large-margin-top" style="margin-top: 50px;">
+		<i class="fa fa-refresh fa-spin huge-icon"></i>
+
+		<div class="bold-heading">Loading</div>
+	</div>
+
+	<div class="large-margin-top" ng-show="!firstLoad">
+		<div class="row" id="">
+			<div class="col-md-3">
+				<div class="card idea-card">
+					<div class="centered pointer" style="margin-top: 20px;" ng-show="!addingNew" ng-click="addNewCard()">
+						<i class="fa fa-plus-circle huge-icon huge-icon-over light-placeholder-colour"></i>
+					</div>
+					<div id="ideaEntryCard" class="card-text" ng-show="addingNew" contenteditable="true">
+					</div>
+					<div class="small-card-controls-right" ng-show="addingNew"
+						 ng-class="{'red-text': charactersLeft <= 0}">
+						{{charactersLeft}}
+					</div>
+					<div class="small-card-controls placeholder-colour" ng-show="addingNew" ng-click="cancelNewCard()">
+						<i class="fa fa-trash-o"></i>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-3"
+				 ng-repeat="idea in ideas | filter:globalSearch | ideas:filters | orderBy: sortBy: true"
+				 id="idea_{{idea._id}}">
+				<div class="card idea-card pointer" style="{{getBackgroundImageForCard(idea)}}"
+					 ng-click="selectIdea(idea)"
+					 ng-class="{'flipInX': idea.pulse, 'animated': idea.pulse, 'small-rotate-right': $index % 2 == 0, 'small-rotate-left': $index % 2 != 0}">
+					<!--<div class="sticker" ng-if="idea.session" style="background-color: {{getSessionColour(idea)}} !important;"></div>-->
+					<div class="card-text" ng-if="!idea.hasImage">{{idea.description}}</div>
+					<div class="small-card-controls-right" ng-if="board.criteria && board.criteria.length > 0">
+						<i class="fa fa-bullseye"></i> <span ng-if="idea.qualificationScore">{{getPercentage(idea.qualificationScorePercentage)}}</span>
+						<span ng-if="!idea.qualificationScore">0%</span>
+					</div>
+					<!--<div class="small-card-controls" ng-show="idea.createdBy == username || userIsAdmin">
+						<div inline-confirm icon="fa fa-trash-o" text='' type="text" confirmfunction="deleteCard()"></div>
+					</div>-->
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div class="modal fade" id="qrModal" tabindex="-1" role="dialog" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">{{board.title}}</h4>
+			</div>
+			<div class="modal-body">
+				<p class="lead">
+					Users can generate ideas for this board directly at
+					<a href="http://ideafunnel.io/{{board._id}}">http://ideafunnel.io/{{board._id}}</a>
+					or by scanning the QR Code below
+				</p>
+
+				<div class="centered">
+					<div id="largeQrCode">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="accessModal" tabindex="-1" role="dialog" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Access Rights</h4>
+			</div>
+			<div class="modal-body">
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="accessRights" value="private"/>
+						<span class="bold-text">Private</span> - only members of the board can generate ideas or view
+						any pages associate with this board.
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="accessRights" value="open"/>
+						<span class="bold-text">Open access</span> - anyone can access this board and generate ideas for
+						it if they have been given the board ID ({{board._id}}). They cannot view this page, edit ideas
+						or manage any aspects of the board.
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" ng-model="accessRights" value="password"/>
+						<span class="bold-text">Open access with password</span> - anyone can access this board and
+						generate ideas for it if they have been given the board ID ({{board._id}}) <span
+							class="bold-text">and</span> password. They cannot view this page, edit ideas or manage any
+						aspects of the board.
+					</label>
+					<label ng-show="accessRights == 'password'">
+						<input type="text" class="form-control small-margin-top" ng-model="board.openAccessPassword" placeholder="Enter a password for this board"/>
+					</label>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" ng-click="saveBoardAccessRights()">Save</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

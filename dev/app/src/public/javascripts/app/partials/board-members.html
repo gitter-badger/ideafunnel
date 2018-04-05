@@ -1,0 +1,57 @@
+
+<div class="col-md-12 main-body-area full-height">
+
+	<div class="fixed-search-bar">
+		<h1>{{board.title}}</h1>
+		<h5><a href="#/boards">Idea Boards</a> / <a href="#/boards/{{board._id}}">{{board.title}}</a> / <i class="fa fa-users"></i> Members</h5>
+
+		<div>
+			<div class="btn-group">
+				<button tabindex="-1" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="small-margin-right"><i class="fa fa-users"></i> Members</span><span class="caret"></span></button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#/boards/{{board._id}}/"><i class="fa fa-th-large"></i> All Ideas</span></a></li>
+					<li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/members"><i class="fa fa-users"/> Members</span></a></li>
+					<!--<li ng-if="adminOfBoard"><a href="#/boards/{{board._id}}/criteria"><i class="fa fa-bullseye"></i> Qualification Criteria</span></a></li>-->
+					<li><a href="/api/idea-boards/{{board._id}}/ideas/export"><i class="fa fa-share-square-o"/> Export to CSV</span></a></li>
+					<li ng-if="adminOfBoard"><a href="/api/idea-boards/{{board._id}}/delete"><i class="fa fa-trash"/> Delete Board</span></a></li>
+				</ul>
+			</div>
+		</div>
+
+
+		<div class="large-margin-top">
+			<div angucomplete id="members" clearonselect="true" placeholder="Add somebody to this board" pause="200" selectedobject="selectedUser" url="/api/user/find?s=" titlefield="firstName,surname" imagefield="profilePic" descriptionfield="email" inputclass="form-control"></div>
+		</div>
+
+	</div>
+
+	<div class="large-margin-top large-padded-top" style="padding-top: 190px;">
+		<div class="row">
+			<div ng-repeat="member in board.members" class="col-md-6" ng-class="{'shake pulse': member.pulse}">
+				<div class="card col-md-12">
+					<div class="col-md-1" style="height:35px;">
+						<img class="profile-circle" ng-src="/me/profile/{{member.userId}}" style="margin-top: -10px; margin-right: -4px;"/>
+					</div>
+					<div class="member-name col-md-11">
+						<div class="col-md-12 small-heading no-padding">{{member.firstName}} {{member.surname}}</div>
+						<div class="col-md-12 no-padding">{{member.userId}}</div>
+						<div class="small-margin-top col-md-12 no-padding" ng-if="member.userId != username">
+							<span class="medium-margin-right">
+								<a href="" ng-click="updateMemberRights(member)">Make <span ng-if="!member.admin">admin</span><span ng-if="member.admin">member</span></a>
+							</span>
+							<span inline-confirm icon="icon-trash-can" mainclass="" text='Remove' type="text" confirmfunction="removeMemberFromBoard($index)"></span>
+						</div>
+						<div class="col-md-12 small-margin-top placeholder-colour no-padding" ng-if="member.userId == username">
+							You cannot update your own access
+						</div>
+					</div>
+					<div class="member-status">
+						<div class="label label-primary" ng-if="member.admin">Admin</div>
+						<div class="label label-default" ng-if="!member.admin">Member</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
