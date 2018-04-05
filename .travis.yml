@@ -5,10 +5,15 @@ language: node_js
 services:
   - docker
 
+env:
+  global:
+    - IMAGE_NAME = capcodigital/ideafunnel
+
 script:
-  - docker build -t capcodigital/ideafunnel dev/app/
+  - docker build --tag "$IMAGE_NAME" dev/app/
 
 after_success:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  - docker tag if-app capcodigital/ideafunnel:latest
-  - docker push capcodigital/ideafunnel:latest
+  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+  - docker tag "$IMAGE_NAME" "$IMAGE_NAME":latest
+  - docker push "$IMAGE_NAME":latest
+  - ops/deploy/do/deploy.sh

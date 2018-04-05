@@ -1,10 +1,9 @@
-// adds the ssh key on digitalocean
-// this is create on terminal using > ssh-keygen -t rsa
+// adds the ssh key to digital ocean
 resource "digitalocean_ssh_key" "default" {
   name       = "${var.key_name}"
   public_key = "${file("${var.pub_key}")}"
 }
-
+/*
 resource "digitalocean_volume" "mongo" {
   region      = "lon1"
   name        = "mongo-volume"
@@ -26,8 +25,7 @@ data "template_cloudinit_config" "example" {
     content      = "${data.template_file.shell-script.rendered}"
   }
 
-}
-
+}*/
 
 resource "digitalocean_droplet" "web" {
   name     = "ifappsrv"
@@ -35,8 +33,8 @@ resource "digitalocean_droplet" "web" {
   image = "docker-16-04"
   region   = "lon1"
   size     = "512mb"
-  volume_ids = ["${digitalocean_volume.mongo.id}"]
-  user_data = "${data.template_cloudinit_config.example.rendered}"
+//  volume_ids = ["${digitalocean_volume.mongo.id}"]
+//  user_data = "${data.template_cloudinit_config.example.rendered}"
 
   provisioner "remote-exec" {
     inline = [
@@ -45,15 +43,15 @@ resource "digitalocean_droplet" "web" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/docker-compose.yml"
+    source      = "${path.module}/../docker-compose.yml"
     destination = "/home/ideafunnel/docker-compose.yml"
   }
-
+/*
   provisioner "file" {
     source      = "${path.module}/scripts/disk.sh"
     destination = "/home/disk.sh"
   }
-
+*/
   provisioner "remote-exec" {
     inline = [
       "apt-get update >> /home/deployment.log",
@@ -61,7 +59,7 @@ resource "digitalocean_droplet" "web" {
       "pip install docker-compose >> /home/deployment.log",
       "cd /home/ideafunnel >> /home/deployment.log",
       "docker-compose up -d",
-      "/bin/bash ../disk.sh scsi-0DO_Volume_${digitalocean_volume.mongo.name}"
+//      "/bin/bash ../disk.sh scsi-0DO_Volume_${digitalocean_volume.mongo.name}"
     ]
   }
 

@@ -1,19 +1,31 @@
 #!/bin/bash
 
-# Retieves the ID's of keys to add
-# Add the relevant parameters as per our solution
+BRANCH=$(git rev-parse --short HEAD)
+SSH_KEY=/tmp/id_rsa
+SSH_KEY_NAME=${BRANCH}
 
-# initalises the directory (Refresh environment)
-    terraform init
+DO_VARS="-var token=${DO_TOKEN}
+         -var key_name=${SSH_KEY_NAME}
+         -var prv_key=${SSH_KEY}
+         -var pub_key=${SSH_KEY}.pub"
 
-# Validates the plan (Fails quickly in CI/CD)
-    terraform validate -var "token=${DO_TOKEN}"
+# Generates a new ssh key
+rm -f ${SSH_KEY} && ssh-keygen -t rsa -f ${SSH_KEY} -N ""
 
-# Refreshs against the real resources (Avoids issues)
-    terraform refresh  -var "token=${DO_TOKEN}" -lock=true
+# Ensures the script is run in its current directory
+cd $(dirname "$0")
 
-# Outputs the plan results to a file (safer)
-    terraform plan -var "token=${DO_TOKEN}" -out=terraform.plan -lock=true
+# Initalises the directory
+terraform init
 
-# Performs the changes to the infrastructure (Uses the plan)
-    terraform apply "terraform.plan"
+# Validates the plan (fails faster in CI/CD)
+terraform validate ${DO_VARS}
+
+# Refreshs against the real resources
+terraform refresh ${DO_VARS} -lock=true
+
+# Outputs the plan results to a file (safer than apply)
+terraform plan ${DO_VARS} -out=terraform.plan -lock=true
+
+# Performs the changes to the infrastructure using the plan
+terraform apply "terraform.plan"
