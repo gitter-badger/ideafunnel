@@ -7,6 +7,7 @@
 
 A GitHub organisation for Capco Digital has been created.  
 Invite is required to join the organisation.
+
 https://github.com/capcodigital
 
 ### Travis CI
