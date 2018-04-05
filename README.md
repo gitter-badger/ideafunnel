@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/capcodigital/ideafunnel.svg?branch=master)](https://travis-ci.org/capcodigital/ideafunnel)
+[![Build Status](https://travis-ci.org/capcodigital/ideafunnel.svg?branch=master)](https://travis-ci.org/capcodigital/ideafunnel)[![codebeat badge](https://codebeat.co/badges/c0bdb938-ce8e-439c-be0a-eedc4573da0e)](https://codebeat.co/projects/github-com-capcodigital-ideafunnel-master)
 
 # Installation Instructions
 
