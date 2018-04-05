@@ -10,6 +10,9 @@ env:
     - IF_APP_CONTEXT=dev/app
     - IF_APP_IMAGE=capcodigital/ideafunnel
 
+before_install:
+  - chmod +x scripts/install_hashicorp.sh
+
 install:
   - scripts/install_hashicorp.sh terraform 0.11.5
 
