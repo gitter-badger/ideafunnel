@@ -10,6 +10,9 @@ env:
     - IF_APP_CONTEXT=dev/app
     - IF_APP_IMAGE=capcodigital/ideafunnel
 
+install:
+  - scripts/install_hashicorp.sh terraform 0.11.5
+
 script:
   - docker build --tag "${IF_APP_IMAGE}" "${IF_APP_CONTEXT}"
 
