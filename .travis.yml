@@ -7,13 +7,14 @@ services:
 
 env:
   global:
-    - IMAGE_NAME = capcodigital/ideafunnel
+    - IF_APP_CONTEXT=dev/app
+    - IF_APP_IMAGE=capcodigital/ideafunnel
 
 script:
-  - docker build --tag "$IMAGE_NAME" dev/app/
+  - docker build --tag "${IF_APP_IMAGE}" "${IF_APP_CONTEXT}"
 
 after_success:
-  - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-  - docker tag "$IMAGE_NAME" "$IMAGE_NAME":latest
-  - docker push "$IMAGE_NAME":latest
+  - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASSWORD}"
+  - docker tag "${IF_APP_IMAGE}" "${IF_APP_IMAGE}":latest
+  - docker push "${IF_APP_IMAGE}":latest
   - ops/deploy/do/deploy.sh
