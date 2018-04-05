@@ -3,7 +3,8 @@
 # Calculates the variables
     PACKAGE=$1
     VERSION=$2
-    OS=$(./get_os.sh)
+    DIR="$(cd "$(dirname "$0")" && pwd)"
+    OS=$(${DIR}/get_os.sh)
     FILE="${PACKAGE}_${VERSION}_${OS}_amd64.zip"
     URL="https://releases.hashicorp.com/${PACKAGE}/${VERSION}/${FILE}"
 
