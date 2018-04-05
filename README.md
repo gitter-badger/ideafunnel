@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/capcodigital/ideafunnel.svg?branch=master)](https://travis-ci.org/capcodigital/ideafunnel)
+
 # Installation Instructions
 
 ## Local Machine Setup
