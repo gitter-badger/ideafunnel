@@ -9,7 +9,8 @@ output "Name" {
 output "SSH Key" {
   value = "${digitalocean_ssh_key.default.id}"
 }
-
+/*
 output "Mongo volume id " {
   value = "${digitalocean_volume.mongo.id}"
 }
+*/

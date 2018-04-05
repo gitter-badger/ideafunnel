@@ -5,10 +5,22 @@ language: node_js
 services:
   - docker
 
+env:
+  global:
+    - IF_APP_CONTEXT=dev/app
+    - IF_APP_IMAGE=capcodigital/ideafunnel
+
+before_install:
+  - chmod +x scripts/install_hashicorp.sh
+
+install:
+  - scripts/install_hashicorp.sh terraform 0.11.5
+
 script:
-  - docker build -t capcodigital/ideafunnel dev/app/
+  - docker build --tag "${IF_APP_IMAGE}" "${IF_APP_CONTEXT}"
 
 after_success:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  - docker tag if-app capcodigital/ideafunnel:latest
-  - docker push capcodigital/ideafunnel:latest
+  - docker login -u "${DOCKER_USER}" -p "${DOCKER_PASSWORD}"
+  - docker tag "${IF_APP_IMAGE}" "${IF_APP_IMAGE}":latest
+  - docker push "${IF_APP_IMAGE}":latest
+  - ops/deploy/do/deploy.sh
