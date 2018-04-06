@@ -7,6 +7,7 @@
 
 A GitHub organisation for Capco Digital has been created.  
 Invite is required to join the organisation.
+
 https://github.com/capcodigital
 
 ### Travis CI
@@ -26,3 +27,9 @@ https://hub.docker.com/u/capcodigital/dashboard/
 A Digital Ocean organisation for Capco Digital has been created
 Invite is required to join the organisation.
 https://cloud.digitalocean.com
+
+### CodeBeat
+
+Automated scanning of code quality issues 
+When users are added to GitHub then should get access to CodeBeat.
+https://codebeat.co
