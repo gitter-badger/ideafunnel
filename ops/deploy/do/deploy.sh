@@ -4,7 +4,13 @@ BRANCH=$(git rev-parse --short HEAD)
 SSH_KEY=/tmp/id_rsa
 SSH_KEY_NAME=${BRANCH}
 
+#DO_VARS="-var token=${DO_TOKEN}
 DO_VARS="-var token=${DO_TOKEN}
+         -var uid=${BRANCH}
+         -var region=lon1
+         -var droplet_count=1
+         -var loadbalancer_count=1
+         -var whoami=$(whoami)
          -var key_name=${SSH_KEY_NAME}
          -var prv_key=${SSH_KEY}
          -var pub_key=${SSH_KEY}.pub"
@@ -28,4 +34,4 @@ terraform refresh ${DO_VARS} -lock=true
 terraform plan ${DO_VARS} -out=terraform.plan -lock=true
 
 # Performs the changes to the infrastructure using the plan
-terraform apply "terraform.plan"
+terraform apply terraform.plan

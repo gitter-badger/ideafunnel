@@ -1,4 +1,9 @@
 variable "token" {}
+variable "region" {}
+variable "droplet_count" {}
+variable "loadbalancer_count" {}
+variable "uid" {}
+variable "whoami" {}
 variable "pub_key" {}
 variable "prv_key" {}
 variable "key_name" {}

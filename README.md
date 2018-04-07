@@ -35,7 +35,7 @@ A docker-composer configuration is created that spins up a mongo container,
 builds the image of the app, spins the app and connects it with mongo.:
 
 ``` shell
-docker-composer -p "if" up --scale app=2
+docker-compose -p "if" up --scale app=2
 ```
 
 ## Alternative to docker-compose, you can manually build and deploy the app to a docker container:

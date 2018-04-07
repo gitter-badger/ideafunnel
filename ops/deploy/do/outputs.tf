@@ -1,16 +1,15 @@
-output "Public ip" {
-  value = "${digitalocean_droplet.web.ipv4_address}"
+
+# Outputs the node IPs
+output "node_ips" {
+  value = "${digitalocean_droplet.node.*.ipv4_address}"
 }
 
-output "Name" {
-  value = "${digitalocean_droplet.web.name}"
+# Outputs the Node Names
+output "node_names" {
+  value = "${digitalocean_droplet.node.*.name}"
 }
 
-output "SSH Key" {
-  value = "${digitalocean_ssh_key.default.id}"
+# Outputs the SSH Key ID
+output "ssh_key" {
+  value = "${digitalocean_ssh_key.remote_key.id}"
 }
-/*
-output "Mongo volume id " {
-  value = "${digitalocean_volume.mongo.id}"
-}
-*/

@@ -1,29 +1,31 @@
 version: '3'
 services:
 
-  if-mgt: # Portainer Container Management
+  # Portainer UI
+  if_mgt:
     image: portainer/portainer
-    container_name: if-mgt
+    container_name: if_mgt
     ports:
         - 9000:9000
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 
+  # MongoDB
   if-db:
-    container_name: if-db
+    container_name: if_db
     restart: always
     image: mongo
     volumes:
       - ./data/ideafunnel:/data/db
     ports:
       - 27017:27017
-
-  if-app:
-    container_name: if-app
+  
+  # Angular/Node.js app
+  app:
     restart: always
     image: capcodigital/ideafunnel
     ports:
-       - 3000:3000
+       - 80:3000
     links:
       - if-db
     depends_on:
