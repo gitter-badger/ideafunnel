@@ -2,6 +2,8 @@
 
 # Installation Instructions
 
+[![Join the chat at https://gitter.im/capcodigital/ideafunnel](https://badges.gitter.im/capcodigital/ideafunnel.svg)](https://gitter.im/capcodigital/ideafunnel?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Local Machine Setup
 
 ### Installation 
